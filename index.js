@@ -9,9 +9,7 @@ var util = require('util');
 var crypto = require('crypto');
 var uploadedFiles = 0;
 var uploadedFail = 0;
-var auth = require('./lib/auth.js');
-var conf = require('./lib/conf.js');
-var cos = require('./lib/cos.js');
+var qcloud = require('qcloud_cos');
 
 module.exports = function (cloud, option) {
 	option = option || {};
@@ -26,15 +24,15 @@ module.exports = function (cloud, option) {
 
 	    var filePath = path.relative(file.base, file.path);
 	    var fileKey = option.dir + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + (option.versioning ? version + '/' : '') + filePath.split(path.sep).join('/');
-	    conf.setAppInfo(cloud.appid,cloud.secretId,cloud.accessId);
+	    qcloud.conf.setAppInfo(cloud.appid,cloud.secretId,cloud.accessId);
 	    var handler = function () {
 	    	var defer = Q.defer();
-	        cos.statFile(cloud.bucket, fileKey, function(ret) {
+	        qcloud.cos.statFile(cloud.bucket, fileKey, function(ret) {
 	           	if(ret.code === 0){
 	           		return defer.resolve();
 	           	}
 	            uploadedFiles++;
-				cos.upload(fileKey, cloud.bucket, fileKey, 1, function(ret) {
+				qcloud.cos.upload(fileKey, cloud.bucket, fileKey, 1, function(ret) {
 					log('Start →', colors.green(fileKey), '→', ret.message);
 					if(ret.code != 0) {
 						uploadedFail++;

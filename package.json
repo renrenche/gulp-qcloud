@@ -1,33 +1,21 @@
 {
-  "name": "qcloud_cos",
-  "version": "1.0.4",
-  "description": "node sdk for qcloud ",
+  "name": "gulp-qcloud",
+  "version": "1.0.0",
+  "description": "腾讯云上传文件",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tencentyun/cos-nodejs-sdk.git"
-  },
   "keywords": [
     "qcloud"
   ],
-  "author": "tencentyun",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/tencentyun/cos-nodejs-sdk/issues"
-  },
-  "homepage": "https://github.com/tencentyun/cos-nodejs-sdk#readme",
-  "engines": [
-    "node >= 0.4.7"
-  ],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "formstream": "0.0.7",
-    "gulp-util": "~2.2.9",
-    "moment": "~2.7.0",
-    "q": "~1.0.1",
-    "qn": "~0.2.2",
-    "through2": "~0.4.0"
+    "gulp-util": "^3.0.7",
+    "moment": "^2.14.1",
+    "q": "^1.4.1",
+    "qcloud_cos": "^1.0.4",
+    "through2": "^2.0.1"
   }
 }
