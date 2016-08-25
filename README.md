@@ -1,5 +1,5 @@
 ```
-const qcloud = require('qcloud')
+const qcloud = require('gulp-qcloud')
 
 gulp.task('qcloud', function () {
      return gulp.src('dist/**/*')
@@ -11,4 +11,4 @@ gulp.task('qcloud', function () {
          }, { dir: 'dist/'}));
 });
 
-建议src与dir 目录相同 
+建议src与dir目录相同
