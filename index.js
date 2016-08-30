@@ -14,7 +14,7 @@ var qcloud = require('qcloud_cos');
 
 module.exports = function(cloud, option) {
     option = option || {};
-    option = Object.assign({}, { dir: '', versioning: false, versionFile: null }, option);
+    option = Object.assign({}, { dir: '', versioning: false, versionFile: null, qCloudDir: '' }, option);
     var version = Moment().format('YYMMDDHHmm'),
         tasks = [];
 
@@ -24,20 +24,21 @@ module.exports = function(cloud, option) {
 
         var filePath = path.relative(file.base, file.path);
         var fileKey = option.dir + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + (option.versioning ? version + '/' : '') + filePath.split(path.sep).join('/');
+        var qcloudFileKey = option.qcloudDir + fileKey;
         qcloud.conf.setAppInfo(cloud.appid, cloud.secretId, cloud.accessId);
         var handler = function() {
             var defer = Q.defer();
-            qcloud.cos.statFile(cloud.bucket, fileKey, function(ret) {
+            qcloud.cos.statFile(cloud.bucket, qcloudFileKey, function(ret) {
                 if (ret.code === 0) {
                     existFiles++;
                     return defer.resolve();
                 }
                 uploadedFiles++;
-                qcloud.cos.upload(fileKey, cloud.bucket, fileKey, 1, function(ret) {
-                    log('Start →', colors.green(fileKey), '→', ret.message);
+                qcloud.cos.upload(fileKey, cloud.bucket, qcloudFileKey, 1, function(ret) {
+                    log('Start →', colors.green(qcloudFileKey), '→', ret.message);
                     if (ret.code != 0) {
                         uploadedFail++;
-                        log('Error →', colors.red(fileKey), ret.message);
+                        log('Error →', colors.red(qcloudFileKey), ret.message);
                         defer.reject();
                     }
                     defer.resolve();
