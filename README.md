@@ -5,8 +5,7 @@
 1. 克隆代码；
 
 ```
-git clone git@gitlab.renrenche.com/fe/gulp-qcloud.git
-npm install
+npm i git+http://gitlab.renrenche.com/fe/gulp-qcloud.git#master --save
 
 ```
 
@@ -14,7 +13,7 @@ npm install
 
 ```
 在自己的gulp文件添加下面代码
-const qcloud = require('qcloud')
+const qcloud = require('gulp-qcloud')
 
 gulp.task('qcloud', function () {
      return gulp.src('dist/**/*')
