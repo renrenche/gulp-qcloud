@@ -14,7 +14,7 @@ var qcloud = require('qcloud_cos');
 
 module.exports = function(cloud, option) {
     option = option || {};
-    option = Object.assign({}, { dir: '', versioning: false, versionFile: null }, option);
+    option = Object.assign({}, { dir: '', prefix: '' }, option);
     var version = Moment().format('YYMMDDHHmm'),
         tasks = [];
 
@@ -23,21 +23,22 @@ module.exports = function(cloud, option) {
         if (file._contents === null) return next();
 
         var filePath = path.relative(file.base, file.path);
-        var fileKey = option.dir + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + (option.versioning ? version + '/' : '') + filePath.split(path.sep).join('/');
+        var fileKey = option.dir + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + filePath.split(path.sep).join('/');
+        var prefixFileKey = (option.prefix) === '' ? fileKey : (option.prefix + ((!option.prefix || option.prefix[option.prefix.length - 1]) === '/' ? '' : '/') + filePath.split(path.sep).join('/'));
         qcloud.conf.setAppInfo(cloud.appid, cloud.secretId, cloud.accessId);
         var handler = function() {
             var defer = Q.defer();
-            qcloud.cos.statFile(cloud.bucket, fileKey, function(ret) {
+            qcloud.cos.statFile(cloud.bucket, prefixFileKey, function(ret) {
                 if (ret.code === 0) {
                     existFiles++;
                     return defer.resolve();
                 }
                 uploadedFiles++;
-                qcloud.cos.upload(fileKey, cloud.bucket, fileKey, 1, function(ret) {
-                    log('Start →', colors.green(fileKey), '→', ret.message);
+                qcloud.cos.upload(fileKey, cloud.bucket, prefixFileKey, 1, function(ret) {
+                    log('Start →', colors.green(prefixFileKey), '→', ret.message);
                     if (ret.code != 0) {
                         uploadedFail++;
-                        log('Error →', colors.red(fileKey), ret.message);
+                        log('Error →', colors.red(prefixFileKey), ret.message);
                         defer.reject();
                     }
                     defer.resolve();
