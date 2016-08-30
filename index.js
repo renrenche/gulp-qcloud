@@ -14,7 +14,7 @@ var qcloud = require('qcloud_cos');
 
 module.exports = function(cloud, option) {
     option = option || {};
-    option = Object.assign({}, { dir: '', versioning: false, versionFile: null, prefix: '' }, option);
+    option = Object.assign({}, { dir: '', prefix: '' }, option);
     var version = Moment().format('YYMMDDHHmm'),
         tasks = [];
 
@@ -24,7 +24,7 @@ module.exports = function(cloud, option) {
 
         var filePath = path.relative(file.base, file.path);
         var fileKey = option.dir + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + (option.versioning ? version + '/' : '') + filePath.split(path.sep).join('/');
-        var prefixFileKey = option.prefix + fileKey;
+        var prefixFileKey = option.prefix + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + (option.versioning ? version + '/' : '') + filePath.split(path.sep).join('/');
         qcloud.conf.setAppInfo(cloud.appid, cloud.secretId, cloud.accessId);
         var handler = function() {
             var defer = Q.defer();
