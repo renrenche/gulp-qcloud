@@ -5,15 +5,22 @@
 1. 克隆代码；
 
 ```
-npm i git+http://gitlab.renrenche.com/fe/gulp-qcloud.git#master --save
+git clone git@gitlab.renrenche.com/fe/gulp-qcloud.git
 
 ```
 
-2.代码演示
+2. 准备环境
+
+执行
+
+```
+npm install
+```
+3.代码演示
 
 ```
 在自己的gulp文件添加下面代码
-const qcloud = require('gulp-qcloud')
+const qcloud = require('qcloud')
 
 gulp.task('qcloud', function () {
      return gulp.src('dist/**/*')
@@ -22,15 +29,17 @@ gulp.task('qcloud', function () {
             secretId: 'AKID69OLbTghCw0I9JTNWZVfWESqndrjCPba',
              bucket: 'webfe',
              appid: 10047826
-         }, { dir: 'dist/'}));
+         }, { dir: 'dist/',prefix: 'prefix'}));
 });
 
-其中('dist/**/*')所要上传的路径，{ dir: 'dist/'}为上传到腾讯云的路径
-注意此时的dir路径一定要和所要上传的路径更目录相同（如果是上传dist下的文件 dir一定为dist）
-不同的话腾讯云会找不见到要上传的文件路径
+其中('dist/**/*')为所要上传的路径，
+{ dir: 'dist/',prefix: 'prefix'}为配置路径
+dir为必添项 它代表到本地上传文件的路径 填写上传文件夹的名称 比如此项目上传dist下所有文件 所以dir:'dist/' 如果你想上传'public/js/**/*' 那么dir:'public/js/'
+prefix为可选项 它代表你要上传到远端的路径 如果不填写的话 会默认dir的路径 如果填写了 访问prefix路径下文件就可以
+dir prefix 下的 '/' 可以省略
 ```
 
-3.检测
+4.检测
 ```
 s0.rrcimg.com/dist/heat.png
 s1.rrcimg.com/dist/heat.png
