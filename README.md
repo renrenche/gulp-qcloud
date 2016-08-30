@@ -6,17 +6,11 @@
 
 ```
 git clone git@gitlab.renrenche.com/fe/gulp-qcloud.git
-
-```
-
-2. 准备环境
-
-执行
-
-```
 npm install
+
 ```
-3.代码演示
+
+2.代码演示
 
 ```
 在自己的gulp文件添加下面代码
@@ -37,7 +31,7 @@ gulp.task('qcloud', function () {
 不同的话腾讯云会找不见到要上传的文件路径
 ```
 
-4.检测
+3.检测
 ```
 s0.rrcimg.com/dist/heat.png
 s1.rrcimg.com/dist/heat.png
