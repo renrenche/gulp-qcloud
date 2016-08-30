@@ -24,21 +24,21 @@ module.exports = function(cloud, option) {
 
         var filePath = path.relative(file.base, file.path);
         var fileKey = option.dir + ((!option.dir || option.dir[option.dir.length - 1]) === '/' ? '' : '/') + (option.versioning ? version + '/' : '') + filePath.split(path.sep).join('/');
-        var qcloudFileKey = option.qcloudDir + fileKey;
+        var qCloudFileKey = option.qCloudDir + fileKey;
         qcloud.conf.setAppInfo(cloud.appid, cloud.secretId, cloud.accessId);
         var handler = function() {
             var defer = Q.defer();
-            qcloud.cos.statFile(cloud.bucket, qcloudFileKey, function(ret) {
+            qcloud.cos.statFile(cloud.bucket, qCloudFileKey, function(ret) {
                 if (ret.code === 0) {
                     existFiles++;
                     return defer.resolve();
                 }
                 uploadedFiles++;
-                qcloud.cos.upload(fileKey, cloud.bucket, qcloudFileKey, 1, function(ret) {
-                    log('Start →', colors.green(qcloudFileKey), '→', ret.message);
+                qcloud.cos.upload(fileKey, cloud.bucket, qCloudFileKey, 1, function(ret) {
+                    log('Start →', colors.green(qCloudFileKey), '→', ret.message);
                     if (ret.code != 0) {
                         uploadedFail++;
-                        log('Error →', colors.red(qcloudFileKey), ret.message);
+                        log('Error →', colors.red(qCloudFileKey), ret.message);
                         defer.reject();
                     }
                     defer.resolve();
