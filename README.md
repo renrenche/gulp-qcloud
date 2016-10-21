@@ -1,10 +1,10 @@
 # gulp-qcloud
 
-Upload files to QCloud
+Upload files to qcloud
 
 ## Usage
 
-```
+```js
 const qcloud = require('gulp-qcloud')
 
 gulp.task('qcloud', function () {
