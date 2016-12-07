@@ -38,7 +38,7 @@ gulp.task('qcloud', function () {
 dir为必添项 它代表到本地上传文件的路径 填写上传文件夹的名称 比如此项目上传dist下所有文件 所以dir:'dist/' 如果你想上传'public/js/**/*' 那么dir:'public/js/'
 prefix为可选项 它代表你要上传到远端的路径 如果不填写的话 会默认dir的路径 如果填写了 访问prefix路径下文件就可以
 dir prefix 下的 '/' 可以省略
-timeout为超时时间 可以不设置 默认三十分钟 (单位:min) 
+timeout为超时时间 可以不设置 默认30s 
 ```
 
 4.检测
