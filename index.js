@@ -1,4 +1,5 @@
 var path = require('path');
+var jsonfile = require('jsonfile');
 var through2 = require('through2');
 var colors = require('gulp-util').colors;
 var log = require('gulp-util').log;
@@ -13,9 +14,9 @@ var QCLOUD_JSON_PATH = path.join(process.cwd(), '.qcloud.json');
 var qcloudJson = fs.existsSync(QCLOUD_JSON_PATH);
 var obj = {创建缓存文件: true};
 if(!qcloudJson){
-    fs.writeFileSync(QCLOUD_JSON_PATH, JSON.stringify(obj));
+    jsonfile.writeFileSync(QCLOUD_JSON_PATH, obj, {spaces: 2});
 }
-var qcloudMapJson = require(QCLOUD_JSON_PATH);
+var qcloudJsonMap = require(QCLOUD_JSON_PATH);
 
 module.exports = function(cloud, option) {
     option = option || {};
@@ -36,13 +37,13 @@ module.exports = function(cloud, option) {
             var defer = Q.defer();
 
             //文件在缓存文件中存在
-            if(qcloudMapJson[prefixFileKey]){
+            if(qcloudJsonMap[prefixFileKey]){
                 existFiles++;
                 return defer.resolve();
             }
 
             //保存未缓存文件
-            qcloudMapJson[prefixFileKey] = true;
+            qcloudJsonMap[prefixFileKey] = true;
 
             //文件在缓存文件中不存在，再到远程判断是否存在 也是为了新使用时创建缓存文件
             qcloud.cos.statFile(cloud.bucket, prefixFileKey, function(ret) {
@@ -69,7 +70,7 @@ module.exports = function(cloud, option) {
         Q.allSettled(tasks)
             .then(function(fulfilled) {
                 //由于不在缓存文件中，添加到缓存文件中
-                fs.writeFileSync(QCLOUD_JSON_PATH, JSON.stringify(qcloudMapJson));
+                jsonfile.writeFileSync(QCLOUD_JSON_PATH, qcloudJsonMap, {spaces: 2});
 
                 log('共处理:', colors.green(fulfilled.length),
                     '跳过:', colors.gray(existFiles),
