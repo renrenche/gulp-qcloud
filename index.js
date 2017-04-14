@@ -2,6 +2,7 @@ var path = require('path');
 var jsonfile = require('jsonfile');
 var through2 = require('through2');
 var colors = require('gulp-util').colors;
+var PluginError = require('gulp-util').PluginError;
 var log = require('gulp-util').log;
 var Q = require('q');
 var fs = require('fs');
@@ -10,6 +11,7 @@ var qcloud = require('qcloud_cos');
 var QCLOUD_JSON_PATH = path.join(process.cwd(), '.qcloud.json');
 var qcloudJson = fs.existsSync(QCLOUD_JSON_PATH);
 var obj = {创建缓存文件: true};
+var PLUGIN_NAME = 'gulp-qcloud';
 
 if(!qcloudJson){
     jsonfile.writeFileSync(QCLOUD_JSON_PATH, obj, {spaces: 2});
@@ -99,12 +101,11 @@ module.exports = function(cloud, option) {
             Q.allSettled(retry)
             .then(function(retries) {
                 done();
-                cb();
-            }, function (error) {
-                log('Failed retry upload files:', error.message);
+                if (retries.every(function (retried) { return retried.state === 'fullfilled'; })) {
+                    return cb();
+                }
+                return cb(new PluginError(PLUGIN_NAME, 'upload failed'));
             });
-        }, function(err) {
-            log('Failed upload files:', err.message);
         });
     });
 };
