@@ -1,12 +1,12 @@
-var path = require('path');
-var jsonfile = require('jsonfile');
-var through2 = require('through2');
-var colors = require('gulp-util').colors;
-var PluginError = require('gulp-util').PluginError;
-var log = require('gulp-util').log;
 var Q = require('q');
 var fs = require('fs');
+var path = require('path');
 var qcloud = require('qcloud_cos');
+var jsonfile = require('jsonfile');
+var through2 = require('through2');
+var log = require('gulp-util').log;
+var colors = require('gulp-util').colors;
+var PluginError = require('gulp-util').PluginError;
 
 var QCLOUD_JSON_PATH = path.join(process.cwd(), '.qcloud.json');
 var qcloudJson = fs.existsSync(QCLOUD_JSON_PATH);
@@ -26,7 +26,6 @@ module.exports = function(cloud, option) {
     option = option || {};
     option = Object.assign({}, { dir: '', prefix: ''}, option);
     var tasks = [];
-    var retry = [];
 
     var timeout = cloud.timeout || 30;
     qcloud.conf.setAppInfo(cloud.appid, cloud.secretId, cloud.accessId, timeout);
@@ -86,11 +85,14 @@ module.exports = function(cloud, option) {
     }, function(cb) {
         Q.allSettled(tasks)
         .then(function(results) {
+            var retry = [];
             results.forEach(function (result) {
                 if (result.state === 'rejected') {
                     retry.push(handler(result.reason));
                 }
             });
+            return retry;
+        }).then(function (retry) {
             // 不需要重试
             if (!retry.length) {
                 done();
@@ -99,9 +101,9 @@ module.exports = function(cloud, option) {
             // 需要重试
             log(colors.green('重试: '));
             Q.allSettled(retry)
-            .then(function(retries) {
+            .then(function(results) {
                 done();
-                if (retries.every(function (retried) { return retried.state === 'fullfilled'; })) {
+                if (results.every(function (retried) { return retried.state === 'fullfilled'; })) {
                     return cb();
                 }
                 return cb(new PluginError(PLUGIN_NAME, 'upload failed'));
